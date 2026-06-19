@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Map;
 
 /**
  * Serves the public-facing business website.
@@ -47,10 +48,35 @@ public class PublicController {
     }
 
 
+    private static final Map<String, String> CATEGORY_IMAGES = Map.ofEntries(
+            Map.entry("Wedding",            "/images/categories/wedding.jpg"),
+            Map.entry("Reception",          "/images/categories/reception.jpg"),
+            Map.entry("Gaye Holud",         "/images/categories/gaye-holud.jpg"),
+            Map.entry("Mehendi Night",      "/images/categories/mehendi-night.jpg"),
+            Map.entry("Birthday Party",     "/images/categories/birthday-party.jpg"),
+            Map.entry("Anniversary",        "/images/categories/anniversary.jpg"),
+            Map.entry("Engagement",         "/images/categories/engagement.jpg"),
+            Map.entry("Baby Shower",        "/images/categories/baby-shower.jpg"),
+            Map.entry("Corporate Event",    "/images/categories/corporate-event.jpg"),
+            Map.entry("Office Party",       "/images/categories/office-party.jpg"),
+            Map.entry("Seminar",            "/images/categories/seminar.jpg"),
+            Map.entry("Conference",         "/images/categories/conference.jpg"),
+            Map.entry("Cultural Program",   "/images/categories/cultural-program.jpg"),
+            Map.entry("Festival Event",     "/images/categories/festival-event.jpg"),
+            Map.entry("Concert",            "/images/categories/concert.jpg"),
+            Map.entry("School Program",     "/images/categories/school-program.jpg"),
+            Map.entry("College Program",    "/images/categories/college-program.jpg"),
+            Map.entry("University Program", "/images/categories/university-program.jpg")
+    );
+
+    private static final String DEFAULT_IMAGE = "/images/categories/default.jpg";
+
     @GetMapping({"/", "/home"})
     public String home(Model model) {
         model.addAttribute("featuredPackages", packageService.findFeatured());
         model.addAttribute("categories", categoryService.findActive());
+        model.addAttribute("categoryImages", CATEGORY_IMAGES);
+        model.addAttribute("defaultCategoryImage", DEFAULT_IMAGE);
         model.addAttribute("reviews", reviewService.findApproved());
         model.addAttribute("galleryItems", galleryService.findLatest(8));
         model.addAttribute("upcomingEvents", bookingService.findUpcoming());

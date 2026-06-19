@@ -176,8 +176,13 @@
         <div class="row g-3">
             <div class="col-lg-3 col-md-4 col-6" th:each="cat : ${categories}">
                 <div class="event-type-card">
-                    <i class="bi bi-stars"></i>
-                    <h6 class="mb-0" th:text="${cat.name}">Event</h6>
+                    <div class="etc-img"
+                         th:style="'background-image: url(' + (${categoryImages.containsKey(cat.name)} ? ${categoryImages.get(cat.name)} : ${defaultCategoryImage}) + ')'">
+                    </div>
+                    <div class="etc-overlay">
+                        <i class="bi bi-stars etc-icon"></i>
+                        <h6 class="etc-title" th:text="${cat.name}">Event</h6>
+                    </div>
                 </div>
             </div>
         </div>

@@ -448,11 +448,67 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
 
 .stat-ic { font-size: 1.8rem; color: var(--accent); display: block; margin-bottom: .4rem; opacity: .9; }
 
-.event-type-card { background: #fff; border: 1px solid #efeaf7; border-radius: 14px; padding: 1.5rem 1rem; text-align: center; transition: all .25s ease; }
-.event-type-card i { font-size: 1.8rem; color: var(--primary); display: block; margin-bottom: .6rem; transition: all .25s; }
-.event-type-card h6 { transition: color .25s; }
-.event-type-card:hover { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); transform: translateY(-5px); box-shadow: 0 16px 32px rgba(106,27,154,.30); }
-.event-type-card:hover i, .event-type-card:hover h6 { color: #fff; }
+/* ── Event Type Image Cards ── */
+.event-type-card {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 180px;
+    cursor: pointer;
+    box-shadow: 0 4px 18px rgba(106,27,154,.12);
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+.event-type-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(106,27,154,.28);
+}
+.etc-img {
+    position: absolute;
+    inset: 0;
+    background-image: var(--cat-img);
+    background-size: cover;
+    background-position: center;
+    transition: transform .4s ease;
+}
+.event-type-card:hover .etc-img {
+    transform: scale(1.08);
+}
+.etc-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(40,0,70,.82) 0%, rgba(106,27,154,.35) 55%, transparent 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem;
+    gap: 4px;
+    transition: background .3s ease;
+}
+.event-type-card:hover .etc-overlay {
+    background: linear-gradient(to top, rgba(40,0,70,.92) 0%, rgba(106,27,154,.55) 60%, transparent 100%);
+}
+.etc-icon {
+    font-size: 1.6rem;
+    color: #ffd700;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .3s ease, transform .3s ease;
+    filter: drop-shadow(0 2px 6px rgba(255,200,0,.6));
+}
+.event-type-card:hover .etc-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+.etc-title {
+    font-size: .88rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    letter-spacing: .03em;
+    text-shadow: 0 1px 4px rgba(0,0,0,.5);
+    text-align: center;
+}
 
 .upcoming-card { display: flex; gap: 1rem; align-items: center; background: #fff; border-radius: 16px; padding: 1.1rem; box-shadow: 0 8px 24px rgba(31,18,53,.07); border: 1px solid #f0ecf8; transition: transform .25s ease, box-shadow .25s ease; }
 .upcoming-card:hover { transform: translateY(-5px); box-shadow: 0 16px 36px rgba(31,18,53,.14); }

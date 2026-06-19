@@ -68,11 +68,11 @@ H2 console: http://localhost:8080/h2-console (JDBC URL `jdbc:h2:mem:shrabon`)
 ---
 
 ## Default Accounts (seeded on first run)
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@shrabonevents.com` | `Admin@12345` |
+| Role | Email                      | Password      |
+|------|----------------------------|---------------|
+| Admin | `jfrtmsne@gmail.com`       | `Admin@1234`  |
 | Staff | `shakil@shrabonevents.com` | `Staff@12345` |
-| Client | `client@shrabonevents.com` | `Client@12345` |
+| Client | `Create your own `         | `        `    |
 
 > Change the admin credentials via `app.admin.*` in `application.properties`.
 
