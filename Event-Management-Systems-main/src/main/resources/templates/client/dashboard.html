@@ -3,39 +3,165 @@
       th:replace="~{fragments/dashboard :: page(~{fragments/sidebar-client :: sidebar}, ~{::content})}">
 <body>
 <div th:fragment="content">
-    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+
+    <!-- Welcome Banner -->
+    <div class="dash-welcome mb-4">
         <div>
-            <h4 class="mb-0">Welcome, <span th:text="${client.user.fullName}">Client</span></h4>
-            <small class="text-muted">Plan and track your events with Shrabon</small>
+            <h4 class="mb-0">Welcome back, <span th:text="${client.user.fullName}">Client</span></h4>
+            <small>Plan and track your events with Shrabon</small>
         </div>
-        <a th:href="@{/client/customize}" class="btn btn-success btn-sm"><i class="bi bi-plus-lg me-1"></i>New Booking</a>
+        <div class="d-flex align-items-center gap-2">
+            <span class="gold-pill">✦ Premium Client</span>
+            <a th:href="@{/client/customize}" class="btn btn-sm text-white fw-semibold" style="background:#c8a84b;border:none;border-radius:8px;padding:.4rem 1rem;font-size:.82rem"><i class="bi bi-plus-lg me-1"></i>New Booking</a>
+        </div>
     </div>
 
+    <!-- KPI Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-4 col-6"><div class="card kpi-card p-3 text-center"><div class="kpi-value text-success" th:text="${totalBookings}">0</div><div class="kpi-label">Total Bookings</div></div></div>
-        <div class="col-md-4 col-6"><div class="card kpi-card p-3 text-center"><div class="kpi-value text-primary" th:text="${upcoming}">0</div><div class="kpi-label">Upcoming Events</div></div></div>
-        <div class="col-md-4 col-12"><div class="card kpi-card p-3 text-center"><div class="kpi-value text-warning"><i class="bi bi-stars"></i></div><div class="kpi-label">Build a custom package anytime</div></div></div>
+        <div class="col-md-4 col-6">
+            <div class="card kpi-card p-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="kpi-icon" style="background:#1a3a2a"><i class="bi bi-calendar-check"></i></div>
+                    <span class="kpi-label mb-0">Total Bookings</span>
+                </div>
+                <div class="kpi-value text-success" th:text="${totalBookings}">0</div>
+                <div class="kpi-sub">All time</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-6">
+            <div class="card kpi-card p-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="kpi-icon" style="background:#1565c0"><i class="bi bi-clock"></i></div>
+                    <span class="kpi-label mb-0">Upcoming Events</span>
+                </div>
+                <div class="kpi-value text-primary" th:text="${upcoming}">0</div>
+                <div class="kpi-sub">Next 30 days</div>
+            </div>
+        </div>
+        <div class="col-md-4 col-12">
+            <div class="card kpi-card p-3">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="kpi-icon" style="background:#c8a84b"><i class="bi bi-stars"></i></div>
+                    <span class="kpi-label mb-0">Quick Action</span>
+                </div>
+                <div style="font-size:.82rem;color:#555;margin-top:4px">Build a custom package anytime</div>
+                <a th:href="@{/client/customize}" class="btn btn-sm mt-2" style="background:#f0ede8;color:#1a3a2a;border:none;border-radius:6px;font-size:.75rem;padding:.3rem .75rem">Customize Now →</a>
+            </div>
+        </div>
     </div>
 
-    <div class="card">
-        <div class="card-header d-flex justify-content-between">My Recent Bookings <a th:href="@{/client/bookings}" class="small">View all</a></div>
+    <!-- Countdown + Payment Chart -->
+    <div class="row g-3 mb-4">
+        <!-- Next event countdown -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <i class="bi bi-hourglass-split text-success"></i> Next Event Countdown
+                </div>
+                <div class="card-body py-3">
+                    <div th:if="${nextEventYear != null}">
+                        <div class="countdown-box">
+                            <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-lbl">DAYS</div></div>
+                            <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-lbl">HRS</div></div>
+                            <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-lbl">MIN</div></div>
+                            <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-lbl">SEC</div></div>
+                        </div>
+                        <div class="cd-event-name mt-2">
+                            Next: <strong th:text="${nextEventName}">Event</strong>
+                            — <span th:text="${nextEventDate}">Date</span>
+                            &nbsp;<span class="badge badge-status" th:text="${nextEventLabel}">Status</span>
+                        </div>
+                        <span id="cd-y" th:text="${nextEventYear}" style="display:none"></span>
+                        <span id="cd-mo" th:text="${nextEventMonth}" style="display:none"></span>
+                        <span id="cd-dy" th:text="${nextEventDay}" style="display:none"></span>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            (function(){
+                                var y  = /*[[${nextEventYear}]]*/ 2026;
+                                var mo = /*[[${nextEventMonth}]]*/ 1;
+                                var dy = /*[[${nextEventDay}]]*/ 1;
+                                var target = new Date(y, mo-1, dy, 0, 0, 0);
+                                function tick(){
+                                    var diff = target - new Date();
+                                    if(diff <= 0){
+                                        ['cd-d','cd-h','cd-m','cd-s'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent='00'; });
+                                        return;
+                                    }
+                                    document.getElementById('cd-d').textContent = String(Math.floor(diff/86400000)).padStart(2,'0');
+                                    document.getElementById('cd-h').textContent = String(Math.floor((diff%86400000)/3600000)).padStart(2,'0');
+                                    document.getElementById('cd-m').textContent = String(Math.floor((diff%3600000)/60000)).padStart(2,'0');
+                                    document.getElementById('cd-s').textContent = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
+                                }
+                                tick(); setInterval(tick, 1000);
+                            })();
+                            /*]]>*/
+                        </script>
+                    </div>
+                    <div th:if="${nextEventYear == null}" class="text-center text-muted py-3" style="font-size:.85rem">
+                        No upcoming events. <a th:href="@{/client/customize}">Book one!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking summary chart -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center gap-2">
+                    <i class="bi bi-bar-chart text-success"></i> Booking Summary
+                </div>
+                <div class="card-body py-3">
+                    <div class="chart-bars">
+                        <div th:each="b,bStat : ${bookings}" th:if="${bStat.index < 4}" class="bar-col">
+                            <div th:classappend="${b.status.label == 'Confirmed'} ? 'bar-confirmed' : (${b.status.label == 'Pending'} ? 'bar-pending' : (${b.status.label == 'In Progress'} ? 'bar-inprogress' : (${b.status.label == 'Completed'} ? 'bar-completed' : 'bar-cancelled')))"></div>
+                            <div class="bar-col-lbl" th:text="${b.category != null ? b.category.name : '-'}">Event</div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(bookings)}" class="w-100 text-center text-muted" style="font-size:.82rem;padding-top:2rem">No data yet</div>
+                    </div>
+                    <div class="chart-legend-row">
+                        <div class="leg-item"><div class="leg-dot" style="background:#1a3a2a"></div>Confirmed</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:#c8a84b"></div>Pending</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:#1e40af"></div>In Progress</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:#166534"></div>Completed</div>
+                        <div class="leg-item"><div class="leg-dot" style="background:#dc2626"></div>Cancelled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Table -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-calendar2-check me-2 text-success"></i>My Recent Bookings</span>
+            <a th:href="@{/client/bookings}" class="small text-success text-decoration-none">View all →</a>
+        </div>
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
-                <thead><tr><th>Ref</th><th>Event</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr></thead>
+                <thead>
+                <tr><th>Ref</th><th>Event</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr>
+                </thead>
                 <tbody>
-                <tr th:each="b : ${bookings}" th:if="${bStat.index < 6}">
-                    <td th:text="${b.bookingReference}">REF</td>
+                <tr th:each="b,bStat : ${bookings}" th:if="${bStat.index < 6}">
+                    <td style="font-family:monospace;font-size:.78rem;color:#888" th:text="${b.bookingReference}">REF</td>
                     <td th:text="${b.category != null ? b.category.name : '-'}">Event</td>
                     <td th:text="${#temporals.format(b.eventDate,'dd MMM yyyy')}">date</td>
-                    <td><span class="badge bg-secondary badge-status" th:text="${b.status.label}">Status</span></td>
+                    <td><span class="badge badge-status"
+                              th:classappend="${b.status.label == 'Confirmed'} ? 'confirmed' : (${b.status.label == 'Pending'} ? 'pending' : (${b.status.label == 'Cancelled'} ? 'cancelled' : (${b.status.label == 'Completed'} ? 'completed' : 'in-progress')))"
+                              th:text="${b.status.label}">Status</span></td>
                     <td th:text="'৳' + ${#numbers.formatDecimal(b.totalAmount,1,'COMMA',0,'POINT')}">0</td>
-                    <td><a th:href="@{'/client/bookings/' + ${b.id}}" class="btn btn-sm btn-outline-success"><i class="bi bi-eye"></i></a></td>
+                    <td><a th:href="@{'/client/bookings/' + ${b.id}}" class="btn btn-sm" style="background:#f0ede8;color:#1a3a2a;border:none;border-radius:6px;font-size:.75rem"><i class="bi bi-eye"></i></a></td>
                 </tr>
-                <tr th:if="${#lists.isEmpty(bookings)}"><td colspan="6" class="text-center text-muted py-4">No bookings yet. <a th:href="@{/client/customize}">Create one!</a></td></tr>
+                <tr th:if="${#lists.isEmpty(bookings)}">
+                    <td colspan="6" class="text-center text-muted py-4">No bookings yet. <a th:href="@{/client/customize}">Create one!</a></td>
+                </tr>
                 </tbody>
             </table>
         </div>
     </div>
+
+
 </div>
+
 </body>
 </html>

@@ -3,7 +3,7 @@
 <body>
 <aside th:fragment="sidebar" class="dash-sidebar dash-sidebar-client" id="dashSidebar">
     <div class="sidebar-brand">
-        <i class="bi bi-gem text-success"></i>
+        <div class="brand-icon"><i class="bi bi-gem"></i></div>
         <div>
             <div class="brand-title">Shrabon</div>
             <div class="brand-sub">Client Portal</div>
@@ -19,6 +19,13 @@
         <a th:href="@{/client/reviews}" th:classappend="${active=='reviews'}?'active'"><i class="bi bi-star"></i>My Reviews</a>
         <a th:href="@{/client/profile}" th:classappend="${active=='profile'}?'active'"><i class="bi bi-person-gear"></i>Profile</a>
     </nav>
+    <div class="sidebar-user" th:if="${client != null}">
+        <div class="su-avatar" th:text="${#strings.substring(client.user.fullName,0,2).toUpperCase()}">JA</div>
+        <div>
+            <div class="su-name" th:text="${client.user.fullName}">Name</div>
+            <div class="su-role">Client</div>
+        </div>
+    </div>
 </aside>
 </body>
 </html>

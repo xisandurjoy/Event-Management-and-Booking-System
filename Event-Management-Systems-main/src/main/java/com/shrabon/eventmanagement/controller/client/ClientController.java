@@ -52,13 +52,32 @@ public class ClientController {
         Long uid = userId();
         Client client = clientService.getByUserId(uid);
         List<Booking> bookings = bookingService.findByClientUserId(uid);
+        // Sort by event date descending for table display
+        bookings.sort((a, b) -> {
+            if (a.getEventDate() == null) return 1;
+            if (b.getEventDate() == null) return -1;
+            return b.getEventDate().compareTo(a.getEventDate());
+        });
         model.addAttribute("active", "dashboard");
         model.addAttribute("client", client);
         model.addAttribute("bookings", bookings);
         model.addAttribute("totalBookings", bookings.size());
+        java.time.LocalDate today = java.time.LocalDate.now();
         model.addAttribute("upcoming", bookings.stream()
-                .filter(b -> b.getEventDate() != null && !b.getEventDate().isBefore(java.time.LocalDate.now()))
+                .filter(b -> b.getEventDate() != null && !b.getEventDate().isBefore(today))
                 .count());
+        // Pick nearest upcoming event for countdown
+        bookings.stream()
+                .filter(b -> b.getEventDate() != null && !b.getEventDate().isBefore(today))
+                .min(java.util.Comparator.comparing(Booking::getEventDate))
+                .ifPresent(b -> {
+                    model.addAttribute("nextEventYear",  b.getEventDate().getYear());
+                    model.addAttribute("nextEventMonth", b.getEventDate().getMonthValue());
+                    model.addAttribute("nextEventDay",   b.getEventDate().getDayOfMonth());
+                    model.addAttribute("nextEventName",  b.getCategory() != null ? b.getCategory().getName() : "Event");
+                    model.addAttribute("nextEventLabel", b.getStatus().getLabel());
+                    model.addAttribute("nextEventDate",  b.getEventDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy")));
+                });
         return "client/dashboard";
     }
 
